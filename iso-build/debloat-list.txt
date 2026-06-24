@@ -1,0 +1,50 @@
+# John OS — offline debloat list (provisioned Appx DisplayName patterns)
+# Used by build-johnos-iso.ps1. One wildcard pattern per line. '#' = comment.
+# These are matched against Get-AppxProvisionedPackage .DisplayName with -like.
+# A keep-guard in the builder refuses to remove Store/Xbox/WebView2/VC++/.NET
+# even if a pattern would match, so this list is safe to extend.
+
+# --- Bing / MSN consumer apps ---
+*BingNews*
+*BingWeather*
+*BingSearch*
+
+# --- Help / tips / get-started ---
+*GetHelp*
+*Getstarted*
+
+# --- Office upsell / notes / tasks ---
+*MicrosoftOfficeHub*
+*Office.OneNote*
+*MicrosoftStickyNotes*
+*Todos*
+
+# --- Games / mixed reality ---
+*MicrosoftSolitaireCollection*
+*MixedReality.Portal*
+
+# --- People / comms / feedback / maps ---
+*People*
+*SkypeApp*
+*WindowsFeedbackHub*
+*WindowsMaps*
+*windowscommunicationsapps*
+*YourPhone*
+
+# --- Media (optional; remove if you use other players) ---
+*ZuneVideo*
+*ZuneMusic*
+*Clipchamp*
+
+# --- Family / automation / assist / chat / assistant ---
+*MicrosoftFamily*
+*PowerAutomateDesktop*
+*QuickAssist*
+*MicrosoftTeams*
+*MSTeams*
+*549981C3F5F10*
+
+# === DO NOT ADD (the builder keep-guard blocks these anyway) ===
+# WindowsStore, DesktopAppInstaller (winget), GamingApp/GamingServices (Xbox),
+# XboxIdentityProvider, Win32WebViewHost/WebView2, VCLibs, .NET, UI.Xaml,
+# SecHealthUI (Defender UI), WindowsTerminal — all required for games/launchers.

@@ -2,6 +2,8 @@
 
 A step-by-step, reproducible workflow to turn an **official Windows 11 ISO** into a John OS installation ISO. Everything is done with **Microsoft-supported tooling** (DISM, ADK, oscdimg) so the result remains genuine, Secure-Boot-compatible, and serviceable.
 
+> 🚀 **Want the automated version?** The entire workflow below is wrapped in a single runnable script: [`../iso-build/build-johnos-iso.ps1`](../iso-build/build-johnos-iso.ps1). See [`../iso-build/QUICKSTART.md`](../iso-build/QUICKSTART.md). This document is the manual reference behind that script.
+
 > **Legality:** You must supply your own genuine Windows 11 ISO (from Microsoft) and a valid license. This project redistributes **no Microsoft binaries**. Building a modified image for personal/lab use is fine; redistributing modified Microsoft images is not.
 
 ---

@@ -64,6 +64,10 @@ John-OS/
 │   ├── 08-privacy-telemetry.ps1
 │   ├── 09-scheduled-tasks.ps1
 │   └── 99-restore-defaults.ps1     ← revert path
+├── iso-build/
+│   ├── QUICKSTART.md               ← "I have the ISO, now what" guide
+│   ├── build-johnos-iso.ps1        ← one-shot custom ISO builder
+│   └── debloat-list.txt            ← offline appx removal list
 ├── autounattend/
 │   └── autounattend.xml            ← unattended OOBE answer file
 └── branding/
@@ -108,6 +112,15 @@ John OS ships as three tuning **profiles** built from the same image. The profil
 
 ## Quick start (for builders)
 
+**Fastest path — build a custom ISO with one command:** see [`iso-build/QUICKSTART.md`](iso-build/QUICKSTART.md).
+On a Windows PC with the Windows ADK installed:
+```powershell
+cd iso-build
+Set-ExecutionPolicy -Scope Process Bypass -Force
+.\build-johnos-iso.ps1 -IsoPath "$HOME\Downloads\Win11.iso" -Profile Balanced
+```
+
+**Manual path (full control):**
 1. Read [`docs/08-iso-build-process.md`](docs/08-iso-build-process.md).
 2. Acquire an official Windows 11 ISO and the Windows ADK.
 3. Mount the install image, apply offline debloat + branding.
