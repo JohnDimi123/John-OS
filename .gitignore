@@ -1,0 +1,31 @@
+# John OS — build & local artifacts (do not commit)
+
+# ISO build workspace
+/build/
+*.iso
+*.wim
+*.esd
+*.msu
+*.cab
+mount/
+src/
+
+# Rasterized branding outputs (SVG master is committed; PNG/JPG are generated)
+branding/*.png
+branding/*.jpg
+branding/*.bmp
+branding/*.ico
+
+# Runtime logs / backups produced by the scripts
+logs/
+backups/
+*.log
+
+# Drivers / updates staged for slipstream (large, license-restricted)
+drivers/
+updates/
+
+# OS noise
+Thumbs.db
+desktop.ini
+.DS_Store

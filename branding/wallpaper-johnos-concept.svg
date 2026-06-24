@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="3840" height="2160" viewBox="0 0 3840 2160" font-family="'Segoe UI', 'Rajdhani', 'Orbitron', sans-serif">
+  <title>John OS — Wallpaper Concept (Balanced / cyan variant)</title>
+  <desc>Dark gaming-inspired wallpaper: JOHN OS wordmark over an isometric grid with a cyan-to-violet light streak. Vector mock of the concept in docs/07-branding-and-ui.md.</desc>
+
+  <defs>
+    <!-- Background vignette -->
+    <radialGradient id="bg" cx="50%" cy="42%" r="75%">
+      <stop offset="0%"  stop-color="#141A24"/>
+      <stop offset="55%" stop-color="#0C1119"/>
+      <stop offset="100%" stop-color="#06080C"/>
+    </radialGradient>
+
+    <!-- Signature cyan -> violet gradient -->
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#00E5FF"/>
+      <stop offset="55%"  stop-color="#3DA0FF"/>
+      <stop offset="100%" stop-color="#7C4DFF"/>
+    </linearGradient>
+
+    <!-- Light streak gradient -->
+    <linearGradient id="streak" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#00E5FF" stop-opacity="0"/>
+      <stop offset="50%"  stop-color="#00E5FF" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#7C4DFF" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Soft glow -->
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="14" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Isometric grid tile -->
+    <pattern id="grid" width="120" height="120" patternUnits="userSpaceOnUse" patternTransform="rotate(0)">
+      <path d="M0 0 H120 M0 0 V120" stroke="#1B2735" stroke-width="1.2"/>
+    </pattern>
+  </defs>
+
+  <!-- Base -->
+  <rect width="3840" height="2160" fill="url(#bg)"/>
+
+  <!-- Perspective floor grid (lower third) -->
+  <g opacity="0.5">
+    <rect x="0" y="1400" width="3840" height="760" fill="url(#grid)"/>
+    <!-- converging lines toward a vanishing point for depth -->
+    <g stroke="#22344A" stroke-width="1.4" opacity="0.7">
+      <line x1="1920" y1="1380" x2="-400" y2="2160"/>
+      <line x1="1920" y1="1380" x2="500"  y2="2160"/>
+      <line x1="1920" y1="1380" x2="1100" y2="2160"/>
+      <line x1="1920" y1="1380" x2="1920" y2="2160"/>
+      <line x1="1920" y1="1380" x2="2740" y2="2160"/>
+      <line x1="1920" y1="1380" x2="3340" y2="2160"/>
+      <line x1="1920" y1="1380" x2="4240" y2="2160"/>
+    </g>
+  </g>
+
+  <!-- Faint hexagon mesh, upper right -->
+  <g stroke="#1C2A3A" stroke-width="2" fill="none" opacity="0.45">
+    <polygon points="3180,300 3260,346 3260,438 3180,484 3100,438 3100,346"/>
+    <polygon points="3340,392 3420,438 3420,530 3340,576 3260,530 3260,438"/>
+    <polygon points="3180,484 3260,530 3260,622 3180,668 3100,622 3100,530"/>
+    <polygon points="3500,300 3580,346 3580,438 3500,484 3420,438 3420,346"/>
+  </g>
+
+  <!-- Signature light streak behind the wordmark -->
+  <g filter="url(#glow)">
+    <rect x="760" y="1058" width="2320" height="8" rx="4" fill="url(#streak)"/>
+  </g>
+
+  <!-- Wordmark -->
+  <g text-anchor="middle" filter="url(#glow)">
+    <text x="1920" y="1010" font-size="360" font-weight="800" letter-spacing="18" fill="#E6EDF3">JOHN</text>
+    <text x="1920" y="1010" font-size="360" font-weight="800" letter-spacing="18" fill="#E6EDF3" dx="430"> </text>
+  </g>
+  <g text-anchor="middle">
+    <text x="1920" y="1320" font-size="360" font-weight="800" letter-spacing="60" fill="url(#accent)" filter="url(#glow)">OS</text>
+  </g>
+
+  <!-- Hex monogram badge -->
+  <g transform="translate(1920,640)" filter="url(#glow)">
+    <polygon points="0,-150 130,-75 130,75 0,150 -130,75 -130,-75"
+             fill="none" stroke="url(#accent)" stroke-width="8"/>
+    <text x="0" y="62" text-anchor="middle" font-size="190" font-weight="800" fill="url(#accent)">J</text>
+  </g>
+
+  <!-- Tagline -->
+  <text x="1920" y="1470" text-anchor="middle" font-size="68" font-weight="500" letter-spacing="22" fill="#8B98A9">BUILT&#160;&#160;TO&#160;&#160;WIN</text>
+
+  <!-- Corner spec marks (esports HUD vibe) -->
+  <g stroke="#00E5FF" stroke-width="3" opacity="0.55" fill="none">
+    <path d="M120 120 H300 M120 120 V300"/>
+    <path d="M3720 2040 H3540 M3720 2040 V1860"/>
+  </g>
+  <text x="140" y="2030" font-size="34" letter-spacing="8" fill="#46586C">JOHN OS · GAMING EDITION · v1.0</text>
+  <text x="3700" y="160" text-anchor="end" font-size="34" letter-spacing="8" fill="#46586C">PURE PERFORMANCE</text>
+</svg>

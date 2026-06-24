@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    John OS — Unattended installation answer file (STARTER TEMPLATE)
+    =================================================================
+    Place at the ROOT of the John OS install media (next to setup.exe).
+
+    WHAT IT DOES
+      * Sets language / locale / keyboard.
+      * Partitions the FIRST disk as GPT/UEFI (EFI + MSR + Windows + Recovery).
+      * Installs Windows 11 PRO (by image name).
+      * Skips OOBE upsell pages; sets privacy toggles to John OS defaults.
+      * Creates a local ADMIN account + a STANDARD daily account.
+      * Runs SetupComplete.cmd (in image) -> John OS tuning at first boot.
+
+    ⚠️ EDIT BEFORE USE
+      * DiskID 0 is WIPED. Confirm the target disk is correct for your hardware.
+      * Change account names/passwords (placeholders below are NOT secure).
+      * Confirm the /IMAGE/NAME matches your install.wim edition string
+        (Dism /Get-WimInfo /WimFile:install.wim).
+      * Windows 11 requires Secure Boot + TPM 2.0 — keep them ON in UEFI.
+
+    Build this in Windows System Image Manager (WSIM) against YOUR install.wim
+    so component versions match. This template targets amd64 Windows 11 24H2.
+-->
+<unattend xmlns="urn:schemas-microsoft-com:unattend">
+
+  <!-- ============ PASS 1: windowsPE (disk + image) ============ -->
+  <settings pass="windowsPE">
+    <component name="Microsoft-Windows-International-Core-WinPE" processorArchitecture="amd64"
+               publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+      <SetupUILanguage><UILanguage>en-US</UILanguage></SetupUILanguage>
+      <InputLocale>en-US</InputLocale>
+      <SystemLocale>en-US</SystemLocale>
+      <UILanguage>en-US</UILanguage>
+      <UserLocale>en-US</UserLocale>
+    </component>
+
+    <component name="Microsoft-Windows-Setup" processorArchitecture="amd64"
+               publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+
+      <!-- Bypass Win11 checks ONLY if testing in a VM without TPM. On real
+           hardware keep Secure Boot + TPM enabled and remove this block. -->
+      <RunSynchronous>
+        <RunSynchronousCommand wcm:action="add" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State">
+          <Order>1</Order>
+          <Path>reg add HKLM\System\Setup\LabConfig /v BypassTPMCheck /t REG_DWORD /d 0 /f</Path>
+        </RunSynchronousCommand>
+      </RunSynchronous>
+
+      <DiskConfiguration>
+        <Disk wcm:action="add" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State">
+          <DiskID>0</DiskID>
+          <WillWipeDisk>true</WillWipeDisk>
+          <CreatePartitions>
+            <!-- EFI System Partition -->
+            <CreatePartition wcm:action="add"><Order>1</Order><Type>EFI</Type><Size>300</Size></CreatePartition>
+            <!-- Microsoft Reserved -->
+            <CreatePartition wcm:action="add"><Order>2</Order><Type>MSR</Type><Size>16</Size></CreatePartition>
+            <!-- Windows (John OS) -->
+            <CreatePartition wcm:action="add"><Order>3</Order><Type>Primary</Type><Extend>true</Extend></CreatePartition>
+          </CreatePartitions>
+          <ModifyPartitions>
+            <ModifyPartition wcm:action="add"><Order>1</Order><PartitionID>1</PartitionID>
+              <Format>FAT32</Format><Label>System</Label></ModifyPartition>
+            <ModifyPartition wcm:action="add"><Order>2</Order><PartitionID>2</PartitionID></ModifyPartition>
+            <ModifyPartition wcm:action="add"><Order>3</Order><PartitionID>3</PartitionID>
+              <Format>NTFS</Format><Label>John OS</Label><Letter>C</Letter></ModifyPartition>
+          </ModifyPartitions>
+        </Disk>
+        <WillShowUI>OnError</WillShowUI>
+      </DiskConfiguration>
+
+      <ImageInstall>
+        <OSImage>
+          <InstallFrom>
+            <MetaData wcm:action="add" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State">
+              <Key>/IMAGE/NAME</Key>
+              <Value>Windows 11 Pro</Value>   <!-- EDIT to match your WIM -->
+            </MetaData>
+          </InstallFrom>
+          <InstallTo><DiskID>0</DiskID><PartitionID>3</PartitionID></InstallTo>
+        </OSImage>
+      </ImageInstall>
+
+      <UserData>
+        <ProductKey>
+          <!-- Leave Key empty to use the embedded/digital license. Do NOT
+               embed a key you are not licensed for. -->
+          <Key></Key>
+          <WillShowUI>OnError</WillShowUI>
+        </ProductKey>
+        <AcceptEula>true</AcceptEula>
+      </UserData>
+    </component>
+  </settings>
+
+  <!-- ============ PASS 2: specialize (OEM + machine prep) ============ -->
+  <settings pass="specialize">
+    <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64"
+               publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+      <ComputerName>JOHN-OS-PC</ComputerName>
+      <OEMInformation>
+        <Manufacturer>John OS</Manufacturer>
+        <Model>Gaming Edition</Model>
+        <SupportURL>https://github.com/johndimi123/john-os</SupportURL>
+        <Logo>C:\Windows\System32\oemlogo.bmp</Logo>
+      </OEMInformation>
+      <!-- Skip "let's connect you to a network" nag is handled in oobeSystem. -->
+    </component>
+  </settings>
+
+  <!-- ============ PASS 3: oobeSystem (OOBE skip + accounts + first logon) ============ -->
+  <settings pass="oobeSystem">
+    <component name="Microsoft-Windows-International-Core" processorArchitecture="amd64"
+               publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+      <InputLocale>en-US</InputLocale>
+      <SystemLocale>en-US</SystemLocale>
+      <UILanguage>en-US</UILanguage>
+      <UserLocale>en-US</UserLocale>
+    </component>
+
+    <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64"
+               publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
+
+      <OOBE>
+        <HideEULAPage>true</HideEULAPage>
+        <HideOEMRegistrationScreen>true</HideOEMRegistrationScreen>
+        <HideOnlineAccountScreens>true</HideOnlineAccountScreens>   <!-- allow local account -->
+        <HideWirelessSetupInOOBE>true</HideWirelessSetupInOOBE>
+        <ProtectYourPC>3</ProtectYourPC>                            <!-- minimal diagnostic data -->
+        <SkipMachineOOBE>true</SkipMachineOOBE>
+        <SkipUserOOBE>true</SkipUserOOBE>
+      </OOBE>
+
+      <UserAccounts>
+        <LocalAccounts>
+          <!-- Administrator (change password!) -->
+          <LocalAccount wcm:action="add" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State">
+            <Name>johnadmin</Name>
+            <Group>Administrators</Group>
+            <DisplayName>John OS Admin</DisplayName>
+            <Password><Value>ChangeMe!Admin#2026</Value><PlainText>true</PlainText></Password>
+          </LocalAccount>
+          <!-- Standard daily account (recommended for safer day-to-day use) -->
+          <LocalAccount wcm:action="add" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State">
+            <Name>player</Name>
+            <Group>Users</Group>
+            <DisplayName>Player</DisplayName>
+            <Password><Value>ChangeMe!Player#2026</Value><PlainText>true</PlainText></Password>
+          </LocalAccount>
+        </LocalAccounts>
+      </UserAccounts>
+
+      <!-- First-logon automation. SetupComplete.cmd (staged in the image) runs
+           BEFORE this as SYSTEM and applies the John OS tuning layer. These
+           per-user commands finish branding + optional app install. -->
+      <FirstLogonCommands>
+        <SynchronousCommand wcm:action="add" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State">
+          <Order>1</Order>
+          <Description>Apply John OS theme + wallpaper</Description>
+          <CommandLine>cmd /c reg add "HKCU\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" /v AppsUseLightTheme /t REG_DWORD /d 0 /f</CommandLine>
+        </SynchronousCommand>
+        <SynchronousCommand wcm:action="add" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State">
+          <Order>2</Order>
+          <Description>Optional: install launchers + utilities via winget</Description>
+          <CommandLine>powershell -NoProfile -ExecutionPolicy Bypass -Command "if (Get-Command winget -EA SilentlyContinue) { winget install --silent --accept-package-agreements --accept-source-agreements Valve.Steam REALiX.HWiNFO Guru3D.RTSS 7zip.7zip Microsoft.PowerToys }"</CommandLine>
+        </SynchronousCommand>
+      </FirstLogonCommands>
+
+      <RegisteredOwner>John OS</RegisteredOwner>
+      <RegisteredOrganization>John OS</RegisteredOrganization>
+      <TimeZone>UTC</TimeZone>   <!-- EDIT to your timezone, e.g. "GTB Standard Time" -->
+    </component>
+  </settings>
+</unattend>
